@@ -21,11 +21,10 @@ public class ResumeController {
 
     private final ResumeService resumeService;
 
-//    @GetMapping
-//    public ResponseEntity<Response<List<ResumeResponseDto>>> getAll() {
-//        return ResponseEntity.ok(resumeService.getAllResumes());
-//    }
-//    get just my resumes by user id
+    @GetMapping("/{name}")
+    public ResponseEntity<Response<ResumeResponseDto>> getByName(@PathVariable String name) {
+        return ResponseEntity.ok(resumeService.getByName(name));
+    }
 
     @GetMapping
     public ResponseEntity<Response<List<ResumeResponseDto>>> getMyResume() {

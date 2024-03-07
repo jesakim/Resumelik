@@ -75,4 +75,11 @@ public class ResumeService {
                 .result("Resume deleted successfully")
                 .build();
     }
+
+    public Response<ResumeResponseDto> getByName(String name) {
+        Resume resume = resumeRepository.findByName(name).orElseThrow(() -> new RuntimeException("Resume not found"));
+        return Response.<ResumeResponseDto>builder()
+                .result(new ResumeResponseDto(resume))
+                .build();
+    }
 }
