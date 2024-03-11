@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 public class ResumeRequestDto {
 
     @NotBlank(message = "Name is required")
-    @Unique(entityClass = Resume.class, fieldName = "name", message = "Name must be unique")
+//    @Unique(entityClass = Resume.class, fieldName = "name", message = "Name must be unique")
     @Length(min = 10, max = 50, message = "Name must be between 10 and 50 characters")
     private String name;
     @NotBlank(message = "Firstname is required")

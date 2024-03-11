@@ -20,7 +20,7 @@ public class LanguageService {
     private final ResumeRepository resumeRepository;
 
     public Response<List<LanguageResponseDto>> getByResumeId(Long resumeId) {
-        List<LanguageResponseDto> languages = languageRepository.findByResumeId(resumeId)
+        List<LanguageResponseDto> languages = languageRepository.findAllByResumeId(resumeId)
                 .stream()
                 .map(LanguageResponseDto::new)
                 .toList();

@@ -2,6 +2,7 @@ package com.example.resumlik.service;
 
 import com.example.resumlik.dto.request.ContactRequestDto;
 import com.example.resumlik.dto.response.ContactResponseDto;
+import com.example.resumlik.enums.ContactType;
 import com.example.resumlik.model.Contact;
 import com.example.resumlik.repository.ContactRepository;
 import com.example.resumlik.repository.ResumeRepository;
@@ -47,6 +48,19 @@ public class ContactService {
 
         return Response.<String>builder()
                 .message("Contact deleted successfully")
+                .build();
+    }
+
+    public Response<ContactResponseDto> update(Long id, ContactRequestDto contactRequestDto) {
+        Contact contact = contactRepository.findById(id).orElseThrow(()->new RuntimeException("Contact not found"));
+
+        contact.setType(ContactType.fromString(contactRequestDto.getType()));
+        contact.setText(contactRequestDto.getText());
+        contact.setLink(contactRequestDto.getLink());
+
+        return Response.<ContactResponseDto>builder()
+                .result(new ContactResponseDto(contactRepository.save(contact)))
+                .message("Contact updated successfully")
                 .build();
     }
 }

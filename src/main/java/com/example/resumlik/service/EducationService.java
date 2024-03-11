@@ -20,7 +20,7 @@ public class EducationService {
 
     public Response<List<EducationResponseDto>> getEducationsByResumeId(Long resumeId) {
 
-        List<EducationResponseDto> educations = educationRepository.getEducationsByResumeId(resumeId)
+        List<EducationResponseDto> educations = educationRepository.findAllByResumeId(resumeId)
                 .stream()
                 .map(EducationResponseDto::new)
                 .toList();

@@ -18,7 +18,6 @@ public class ResumeResponseDto {
     private String lastName;
     private String picture;
     private String title;
-    private Long userId;
 
     public ResumeResponseDto(Resume resume) {
         this.id = resume.getId();
@@ -27,6 +26,5 @@ public class ResumeResponseDto {
         this.lastName = resume.getLastName();
         this.picture = resume.getPicture();
         this.title = resume.getTitle();
-        this.userId = resume.getUser().getId();
     }
 }

@@ -2,13 +2,14 @@ package com.example.resumlik.service;
 
 
 import com.example.resumlik.dto.request.ResumeRequestDto;
-import com.example.resumlik.dto.response.ResumeResponseDto;
+import com.example.resumlik.dto.response.*;
 import com.example.resumlik.model.Resume;
-import com.example.resumlik.repository.ResumeRepository;
-import com.example.resumlik.repository.UserRepository;
+import com.example.resumlik.repository.*;
 import com.example.resumlik.util.Response;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
@@ -17,22 +18,22 @@ import java.util.List;
 public class ResumeService {
 
     private final ResumeRepository resumeRepository;
-
     private final UserRepository userRepository;
-
-//    public Response<List<ResumeResponseDto>> getAllResumes() {
-//
-//        List<ResumeResponseDto> resumeDtoList = resumeRepository.findAll().stream()
-//                .map(ResumeResponseDto::fromEntity)
-//                .toList();
-//
-//        return Response.<List<ResumeResponseDto>>builder()
-//                .result(resumeDtoList)
-//                .build();
-//
-//    }
+    private final AddressRepository addressRepository;
+    private final CertificateRepository certificateRepository;
+    private final ContactRepository contactRepository;
+    private final EducationRepository educationRepository;
+    private final ExperienceRepository experienceRepository;
+    private final HobbyRepository hobbyRepository;
+    private final LanguageRepository languageRepository;
+    private final ProjectRepository projectRepository;
+    private final SkillRepository skillRepository;
+    private final ViewRepository viewRepository;
 
     public Response<ResumeResponseDto> create(ResumeRequestDto resumeDto) {
+        resumeRepository.findByName(resumeDto.getName()).ifPresent(resume -> {
+            throw new IllegalArgumentException("Resume name must be unique");
+        });
 
         Resume resume = resumeDto.toEntity();
         resume.setUser(userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found")));
@@ -53,12 +54,22 @@ public class ResumeService {
                 .build();
     }
 
-    public Response<ResumeResponseDto> update(Long id, ResumeRequestDto resumeRequestDto) {
+    public Response<ResumeResponseDto> update(Long id,@Valid ResumeRequestDto resumeRequestDto) {
+        resumeRepository.findByName(resumeRequestDto.getName()).ifPresent(resume -> {
+            if (!resume.getId().equals(id)) {
+                throw new IllegalArgumentException("Resume name must be unique");
+            } else if (!resume.getUser().getId().equals(1L)) {
+                throw new IllegalArgumentException("You can't update this resume");
+            }
+        });
+
         Resume resume = resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resume not found"));
-        resume.setTitle(resumeRequestDto.getTitle());
+        resume.setName(resumeRequestDto.getName());
         resume.setFirstName(resumeRequestDto.getFirstName());
         resume.setLastName(resumeRequestDto.getLastName());
         resume.setPicture(resumeRequestDto.getPicture());
+        resume.setTitle(resumeRequestDto.getTitle());
+
 
         return Response.<ResumeResponseDto>builder()
                 .result(new ResumeResponseDto(resumeRepository.save(resume)))
@@ -76,10 +87,45 @@ public class ResumeService {
                 .build();
     }
 
-    public Response<ResumeResponseDto> getByName(String name) {
+    public Response<FullResumeResponseDto> getByName(String name) {
         Resume resume = resumeRepository.findByName(name).orElseThrow(() -> new RuntimeException("Resume not found"));
-        return Response.<ResumeResponseDto>builder()
-                .result(new ResumeResponseDto(resume))
+
+        FullResumeResponseDto fullResumeResponseDto = new FullResumeResponseDto(resume);
+        fullResumeResponseDto.setAddresses(addressRepository.findAllByResumeId(resume.getId()).stream()
+                .map(AddressResponseDto::new)
+                .toArray(AddressResponseDto[]::new));
+        fullResumeResponseDto.setCertificates(certificateRepository.findAllByResumeId(resume.getId()).stream()
+                .map(CertificateResponseDto::new)
+                .toArray(CertificateResponseDto[]::new));
+        fullResumeResponseDto.setContacts(contactRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ContactResponseDto::new)
+                .toArray(ContactResponseDto[]::new));
+        fullResumeResponseDto.setEducations(educationRepository.findAllByResumeId(resume.getId()).stream()
+                .map(EducationResponseDto::new)
+                .toArray(EducationResponseDto[]::new));
+        fullResumeResponseDto.setExperiences(experienceRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ExperienceResponseDto::new)
+                .toArray(ExperienceResponseDto[]::new));
+        fullResumeResponseDto.setHobbies(hobbyRepository.findAllByResumeId(resume.getId()).stream()
+                .map(HobbyResponseDto::new)
+                .toArray(HobbyResponseDto[]::new));
+        fullResumeResponseDto.setLanguages(languageRepository.findAllByResumeId(resume.getId()).stream()
+                .map(LanguageResponseDto::new)
+                .toArray(LanguageResponseDto[]::new));
+        fullResumeResponseDto.setProjects(projectRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ProjectResponseDto::new)
+                .toArray(ProjectResponseDto[]::new));
+        fullResumeResponseDto.setSkills(skillRepository.findAllByResumeId(resume.getId()).stream()
+                .map(SkillResponseDto::new)
+                .toArray(SkillResponseDto[]::new));
+        fullResumeResponseDto.setViews(viewRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ViewResponseDto::new)
+                .toArray(ViewResponseDto[]::new));
+
+        return Response.<FullResumeResponseDto>builder()
+                .result(fullResumeResponseDto)
                 .build();
+
+
     }
 }

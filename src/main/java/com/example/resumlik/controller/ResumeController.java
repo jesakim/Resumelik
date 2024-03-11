@@ -1,6 +1,7 @@
 package com.example.resumlik.controller;
 
 import com.example.resumlik.dto.request.ResumeRequestDto;
+import com.example.resumlik.dto.response.FullResumeResponseDto;
 import com.example.resumlik.dto.response.ResumeResponseDto;
 import com.example.resumlik.model.Resume;
 import com.example.resumlik.repository.ResumeRepository;
@@ -22,7 +23,7 @@ public class ResumeController {
     private final ResumeService resumeService;
 
     @GetMapping("/{name}")
-    public ResponseEntity<Response<ResumeResponseDto>> getByName(@PathVariable String name) {
+    public ResponseEntity<Response<FullResumeResponseDto>> getByName(@PathVariable String name) {
         return ResponseEntity.ok(resumeService.getByName(name));
     }
 

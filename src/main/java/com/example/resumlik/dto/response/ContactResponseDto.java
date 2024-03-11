@@ -12,11 +12,15 @@ public class ContactResponseDto {
     private String type;
     private String text;
     private String link;
+    private Long resumeId;
+
+
 
     public ContactResponseDto(Contact contact) {
         this.id = contact.getId();
         this.type = contact.getType().name();
         this.text = contact.getText();
         this.link = contact.getLink();
+        this.resumeId = contact.getResume().getId();
     }
 }

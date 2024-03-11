@@ -32,4 +32,9 @@ public class ContactController {
     public ResponseEntity<Response<String>> delete(@PathVariable Long id) {
         return ResponseEntity.ok(contactService.delete(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<ContactResponseDto>> update(@PathVariable Long id, @Valid @RequestBody ContactRequestDto contactRequestDto) {
+        return ResponseEntity.ok(contactService.update(id, contactRequestDto));
+    }
 }

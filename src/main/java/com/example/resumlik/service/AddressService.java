@@ -53,4 +53,18 @@ public class AddressService {
                 .message("Address deleted successfully")
                 .build();
     }
+
+    public Response<AddressResponseDto> update(Long id, AddressRequestDto addressRequestDto) {
+        Address address = addressRepository.findById(id).orElseThrow(() -> new RuntimeException("Address not found"));
+
+        address.setStreet(addressRequestDto.getStreet());
+        address.setAdditionalStreet(addressRequestDto.getAdditionalStreet());
+        address.setCity(addressRequestDto.getCity());
+        address.setCountry(addressRequestDto.getCountry());
+
+        return Response.<AddressResponseDto>builder()
+                .result(new AddressResponseDto(addressRepository.save(address)))
+                .message("Address updated successfully")
+                .build();
+    }
 }

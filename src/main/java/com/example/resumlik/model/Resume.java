@@ -25,34 +25,34 @@ public class Resume {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Address> addresses;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Education> educations;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<View> views;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Contact> contacts;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Language> languages;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Skill> skills;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Experience> experiences;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Certificate> certificates;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Hobby> hobbies;
 
-    @OneToMany(mappedBy = "resume")
+    @OneToMany(mappedBy = "resume" , cascade = CascadeType.ALL)
     private List<Project> projects;
 
     // Setters and getters

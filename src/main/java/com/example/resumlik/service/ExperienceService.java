@@ -86,4 +86,19 @@ public class ExperienceService {
                 .result("Experience deleted.")
                 .build();
     }
+
+    public Response<ExperienceResponseDto> update(Long id, ExperienceRequestDto experienceRequestDto) {
+        Experience experience = experienceRepository.findById(id).orElseThrow(() -> new RuntimeException("Experience not found."));
+
+        experience.setCompany(experienceRequestDto.getCompany());
+        experience.setTitle(experienceRequestDto.getTitle());
+        experience.setFromDate(experienceRequestDto.getFromDate());
+        experience.setToDate(experienceRequestDto.getToDate());
+        experience.setDescription(experienceRequestDto.getDescription());
+
+        return Response.<ExperienceResponseDto>builder()
+                .result(new ExperienceResponseDto(experienceRepository.save(experience)))
+                .message("Experience updated.")
+                .build();
+    }
 }
