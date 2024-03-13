@@ -22,7 +22,6 @@ public class LanguageRequestDto {
     @NotNull(message = "Resume id is required.")
     @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "Resume id is not valid.")
     private Long resumeId;
-
     public Language toEntity() {
         return Language.builder()
                 .name(name)

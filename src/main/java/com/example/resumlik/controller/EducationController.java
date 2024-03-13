@@ -36,5 +36,10 @@ public class EducationController {
         return ResponseEntity.ok(educationService.delete(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<EducationResponseDto>> updateEducation(@PathVariable Long id, @Valid @RequestBody EducationRequestDto educationRequestDto) {
+        return ResponseEntity.ok(educationService.update(id, educationRequestDto));
+    }
+
 
 }

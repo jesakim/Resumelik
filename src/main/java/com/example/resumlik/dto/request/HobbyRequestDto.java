@@ -17,7 +17,6 @@ public class HobbyRequestDto {
     @NotNull(message = "Resume id is required.")
     @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "Resume id is not valid.")
     private Long resumeId;
-
     public Hobby toEntity() {
         return Hobby.builder()
                 .name(name)

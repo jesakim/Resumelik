@@ -31,7 +31,6 @@ public class ExperienceRequestDto {
     @NotNull(message = "Resume id is required.")
     @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "Resume id is not valid.")
     private Long resumeId;
-
     public Experience toEntity() {
         return Experience.builder()
                 .company(company)

@@ -34,6 +34,11 @@ public class CertificateController {
         return ResponseEntity.ok(certificateService.getAllByResumeId(resumeId));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<CertificateResponseDto>> update(@PathVariable Long id, @Valid @RequestBody CertificateRequestDto certificateRequestDto) {
+        return ResponseEntity.ok(certificateService.update(id, certificateRequestDto));
+    }
+
 
 
 }

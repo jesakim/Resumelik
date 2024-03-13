@@ -33,4 +33,9 @@ public class HobbyController {
     public ResponseEntity<Response<List<HobbyResponseDto>>> getAllByResumeId(@PathVariable Long resumeId) {
         return ResponseEntity.ok(hobbyService.getAllByResumeId(resumeId));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<HobbyResponseDto>> update(@PathVariable Long id, @Valid @RequestBody HobbyRequestDto hobbyRequestDto) {
+        return ResponseEntity.ok(hobbyService.update(id, hobbyRequestDto));
+    }
 }

@@ -35,4 +35,9 @@ public class LanguageController {
     public ResponseEntity<Response<String>> deleteLanguage(@PathVariable Long id) {
         return ResponseEntity.ok(languageService.delete(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<LanguageResponseDto>> updateLanguage(@PathVariable Long id, @Valid @RequestBody LanguageRequestDto languageRequestDto) {
+        return ResponseEntity.ok(languageService.update(id, languageRequestDto));
+    }
 }

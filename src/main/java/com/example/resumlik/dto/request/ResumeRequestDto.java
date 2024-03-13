@@ -1,6 +1,5 @@
 package com.example.resumlik.dto.request;
 
-import com.example.resumlik.annotation.validation.Unique;
 import com.example.resumlik.model.Resume;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import org.hibernate.validator.constraints.Length;
 public class ResumeRequestDto {
 
     @NotBlank(message = "Name is required")
-//    @Unique(entityClass = Resume.class, fieldName = "name", message = "Name must be unique")
     @Length(min = 10, max = 50, message = "Name must be between 10 and 50 characters")
     private String name;
     @NotBlank(message = "Firstname is required")

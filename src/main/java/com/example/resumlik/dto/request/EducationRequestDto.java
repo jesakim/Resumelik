@@ -31,7 +31,6 @@ public class EducationRequestDto {
     @NotNull(message = "Resume id is required.")
     @Digits(integer = Integer.MAX_VALUE, fraction = 0, message = "Resume id is not valid.")
     private Long resumeId;
-
     public Education toEntity() {
         return Education.builder()
                 .establishment(establishment)

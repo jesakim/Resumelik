@@ -4,10 +4,13 @@ package com.example.resumlik.service;
 import com.example.resumlik.dto.request.ResumeRequestDto;
 import com.example.resumlik.dto.response.*;
 import com.example.resumlik.model.Resume;
+import com.example.resumlik.model.User;
 import com.example.resumlik.repository.*;
+import com.example.resumlik.util.AuthHelper;
 import com.example.resumlik.util.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -36,7 +39,7 @@ public class ResumeService {
         });
 
         Resume resume = resumeDto.toEntity();
-        resume.setUser(userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found")));
+        resume.setUser(AuthHelper.getCurrentUser());
 
         return Response.<ResumeResponseDto>builder()
                 .result(new ResumeResponseDto(resumeRepository.save(resume)))
@@ -45,7 +48,7 @@ public class ResumeService {
     }
 
     public Response<List<ResumeResponseDto>> getMyResume() {
-        List<ResumeResponseDto> resumeDtoList = resumeRepository.findAllByUserId(1L).stream()
+        List<ResumeResponseDto> resumeDtoList = resumeRepository.findAllByUserId(AuthHelper.getCurrentUserId()).stream()
                 .map(ResumeResponseDto::new)
                 .toList();
 
@@ -55,15 +58,17 @@ public class ResumeService {
     }
 
     public Response<ResumeResponseDto> update(Long id,@Valid ResumeRequestDto resumeRequestDto) {
-        resumeRepository.findByName(resumeRequestDto.getName()).ifPresent(resume -> {
-            if (!resume.getId().equals(id)) {
+        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resume not found"));
+
+        if (!resume.getUser().getId().equals(AuthHelper.getCurrentUserId())) {
+            throw new IllegalArgumentException("You can't update this resume");
+        }
+        resumeRepository.findByName(resumeRequestDto.getName()).ifPresent(resume1 -> {
+            if (!resume1.getId().equals(id)) {
                 throw new IllegalArgumentException("Resume name must be unique");
-            } else if (!resume.getUser().getId().equals(1L)) {
-                throw new IllegalArgumentException("You can't update this resume");
             }
         });
 
-        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resume not found"));
         resume.setName(resumeRequestDto.getName());
         resume.setFirstName(resumeRequestDto.getFirstName());
         resume.setLastName(resumeRequestDto.getLastName());
@@ -79,11 +84,13 @@ public class ResumeService {
 
     public Response<String> delete(Long id) {
 
-        resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resume not found"));
-
+        Resume resume = resumeRepository.findById(id).orElseThrow(() -> new RuntimeException("Resume not found"));
+        if (!resume.getUser().getId().equals(AuthHelper.getCurrentUserId())) {
+            throw new IllegalArgumentException("You can't delete this resume");
+        }
         resumeRepository.deleteById(id);
         return Response.<String>builder()
-                .result("Resume deleted successfully")
+                .message("Resume deleted successfully")
                 .build();
     }
 

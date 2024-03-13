@@ -2,9 +2,12 @@ package com.example.resumlik.service;
 
 import com.example.resumlik.dto.request.SkillRequestDto;
 import com.example.resumlik.dto.response.SkillResponseDto;
+import com.example.resumlik.enums.SkillType;
+import com.example.resumlik.model.Resume;
 import com.example.resumlik.model.Skill;
 import com.example.resumlik.repository.ResumeRepository;
 import com.example.resumlik.repository.SkillRepository;
+import com.example.resumlik.util.AuthHelper;
 import com.example.resumlik.util.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,9 +34,12 @@ public class SkillService {
     }
 
     public Response<SkillResponseDto> save(SkillRequestDto skillRequestDto) {
-
+        Resume resume = resumeRepository.findById(skillRequestDto.getResumeId()).orElseThrow(() -> new RuntimeException("Resume not found."));
+        if(!AuthHelper.checkOwnerShip(resume)){
+            throw new RuntimeException("You are not authorized to create skill for this resume.");
+        }
         Skill skill = skillRequestDto.toEntity();
-        skill.setResume(resumeRepository.findById(skillRequestDto.getResumeId()).orElseThrow(() -> new RuntimeException("Resume not found.")));
+        skill.setResume(resume);
 
         return Response.<SkillResponseDto>builder()
                 .result(new SkillResponseDto(skillRepository.save(skill)))
@@ -41,13 +47,31 @@ public class SkillService {
     }
 
     public Response<String> delete(Long id) {
-        skillRepository.findById(id).orElseThrow(() -> new RuntimeException("Skill not found."));
+        Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("Skill not found."));
+        if(!AuthHelper.checkOwnerShip(skill)){
+            throw new RuntimeException("You are not authorized to delete this skill.");
+        }
 
         skillRepository.deleteById(id);
 
         return Response.<String>builder()
                 .message("Skill deleted.")
                 .result("Skill deleted.")
+                .build();
+    }
+
+    public Response<SkillResponseDto> update(Long id, SkillRequestDto skillRequestDto) {
+        Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("Skill not found."));
+        if(!AuthHelper.checkOwnerShip(skill)){
+            throw new RuntimeException("You are not authorized to update this skill.");
+        }
+        skill.setName(skillRequestDto.getName());
+        skill.setType(SkillType.valueOf(skillRequestDto.getType()));
+        skill.setResume(resumeRepository.findById(skillRequestDto.getResumeId()).orElseThrow(() -> new RuntimeException("Resume not found.")));
+
+        return Response.<SkillResponseDto>builder()
+                .result(new SkillResponseDto(skillRepository.save(skill)))
+                .message("Skill updated.")
                 .build();
     }
 }

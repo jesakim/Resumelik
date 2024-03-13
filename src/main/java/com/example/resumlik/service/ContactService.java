@@ -4,8 +4,10 @@ import com.example.resumlik.dto.request.ContactRequestDto;
 import com.example.resumlik.dto.response.ContactResponseDto;
 import com.example.resumlik.enums.ContactType;
 import com.example.resumlik.model.Contact;
+import com.example.resumlik.model.Resume;
 import com.example.resumlik.repository.ContactRepository;
 import com.example.resumlik.repository.ResumeRepository;
+import com.example.resumlik.util.AuthHelper;
 import com.example.resumlik.util.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +34,12 @@ public class ContactService {
 
 
     public Response<ContactResponseDto> save(ContactRequestDto contactRequestDto) {
+        Resume resume = resumeRepository.findById(contactRequestDto.getResumeId()).orElseThrow(()->new RuntimeException("Resume not found"));
+        if (!AuthHelper.checkOwnerShip(resume)){
+            throw new RuntimeException("You are not authorized to add contact to this resume");
+        }
         Contact contact = contactRequestDto.toEntity();
-        contact.setResume(resumeRepository.findById(contactRequestDto.getResumeId()).orElseThrow(()->new RuntimeException("Resume not found")));
+        contact.setResume(resume);
 
         return Response.<ContactResponseDto>builder()
                 .result(new ContactResponseDto(contactRepository.save(contact)))
@@ -42,7 +48,10 @@ public class ContactService {
     }
 
     public Response<String> delete(Long id) {
-        contactRepository.findById(id).orElseThrow(()->new RuntimeException("Contact not found"));
+        Contact contact = contactRepository.findById(id).orElseThrow(()->new RuntimeException("Contact not found"));
+        if (!AuthHelper.checkOwnerShip(contact.getResume())){
+            throw new RuntimeException("You are not authorized to delete this contact");
+        }
 
         contactRepository.deleteById(id);
 
@@ -53,6 +62,9 @@ public class ContactService {
 
     public Response<ContactResponseDto> update(Long id, ContactRequestDto contactRequestDto) {
         Contact contact = contactRepository.findById(id).orElseThrow(()->new RuntimeException("Contact not found"));
+        if (!AuthHelper.checkOwnerShip(contact.getResume())){
+            throw new RuntimeException("You are not authorized to update this contact");
+        }
 
         contact.setType(ContactType.fromString(contactRequestDto.getType()));
         contact.setText(contactRequestDto.getText());
