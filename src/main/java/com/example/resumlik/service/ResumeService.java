@@ -96,6 +96,9 @@ public class ResumeService {
 
     public Response<FullResumeResponseDto> getByName(String name) {
         Resume resume = resumeRepository.findByName(name).orElseThrow(() -> new RuntimeException("Resume not found"));
+        if (!AuthHelper.checkOwnerShip(resume)){
+            throw new RuntimeException("You are not authorized to get this resume");
+        }
 
         FullResumeResponseDto fullResumeResponseDto = new FullResumeResponseDto(resume);
         fullResumeResponseDto.setAddresses(addressRepository.findAllByResumeId(resume.getId()).stream()
@@ -128,6 +131,45 @@ public class ResumeService {
         fullResumeResponseDto.setViews(viewRepository.findAllByResumeId(resume.getId()).stream()
                 .map(ViewResponseDto::new)
                 .toArray(ViewResponseDto[]::new));
+
+        return Response.<FullResumeResponseDto>builder()
+                .result(fullResumeResponseDto)
+                .build();
+
+
+    }
+
+    public Response<FullResumeResponseDto> getByNamePublic(String name) {
+        Resume resume = resumeRepository.findByName(name).orElseThrow(() -> new RuntimeException("Resume not found"));
+
+        FullResumeResponseDto fullResumeResponseDto = new FullResumeResponseDto(resume);
+        fullResumeResponseDto.setAddresses(addressRepository.findAllByResumeId(resume.getId()).stream()
+                .map(AddressResponseDto::new)
+                .toArray(AddressResponseDto[]::new));
+        fullResumeResponseDto.setCertificates(certificateRepository.findAllByResumeId(resume.getId()).stream()
+                .map(CertificateResponseDto::new)
+                .toArray(CertificateResponseDto[]::new));
+        fullResumeResponseDto.setContacts(contactRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ContactResponseDto::new)
+                .toArray(ContactResponseDto[]::new));
+        fullResumeResponseDto.setEducations(educationRepository.findAllByResumeId(resume.getId()).stream()
+                .map(EducationResponseDto::new)
+                .toArray(EducationResponseDto[]::new));
+        fullResumeResponseDto.setExperiences(experienceRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ExperienceResponseDto::new)
+                .toArray(ExperienceResponseDto[]::new));
+        fullResumeResponseDto.setHobbies(hobbyRepository.findAllByResumeId(resume.getId()).stream()
+                .map(HobbyResponseDto::new)
+                .toArray(HobbyResponseDto[]::new));
+        fullResumeResponseDto.setLanguages(languageRepository.findAllByResumeId(resume.getId()).stream()
+                .map(LanguageResponseDto::new)
+                .toArray(LanguageResponseDto[]::new));
+        fullResumeResponseDto.setProjects(projectRepository.findAllByResumeId(resume.getId()).stream()
+                .map(ProjectResponseDto::new)
+                .toArray(ProjectResponseDto[]::new));
+        fullResumeResponseDto.setSkills(skillRepository.findAllByResumeId(resume.getId()).stream()
+                .map(SkillResponseDto::new)
+                .toArray(SkillResponseDto[]::new));
 
         return Response.<FullResumeResponseDto>builder()
                 .result(fullResumeResponseDto)

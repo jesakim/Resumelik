@@ -23,7 +23,8 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST = {
-            Constants.API_VERSION+"/auth/**"
+            Constants.API_VERSION+"/auth/**",
+            Constants.API_VERSION+"/resume/public/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

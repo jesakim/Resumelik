@@ -27,6 +27,11 @@ public class ResumeController {
         return ResponseEntity.ok(resumeService.getByName(name));
     }
 
+    @GetMapping("/public/{name}")
+    public ResponseEntity<Response<FullResumeResponseDto>> getPublicByName(@PathVariable String name) {
+        return ResponseEntity.ok(resumeService.getByNamePublic(name));
+    }
+
     @GetMapping
     public ResponseEntity<Response<List<ResumeResponseDto>>> getMyResume() {
         return ResponseEntity.ok(resumeService.getMyResume());
